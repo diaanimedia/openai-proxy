@@ -1,17 +1,31 @@
-export default async function handleRequest(request: Request): Promise<Response> {
-  const body = await request.json();
+export const config = {
+  runtime: "edge",
+};
 
-  const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+export default async function handler(req: Request) {
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Only POST allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const body = await req.json();
+  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
+      "Authorization": `Bearer ${OPENAI_API_KEY}`,
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify(body),
   });
 
-  const data = await openaiRes.json();
+  const data = await response.json();
+
   return new Response(JSON.stringify(data), {
+    status: response.status,
     headers: { "Content-Type": "application/json" },
   });
 }
