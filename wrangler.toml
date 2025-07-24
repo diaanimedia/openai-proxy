@@ -8,3 +8,6 @@ compatibility_date = "2022-03-22"
 
 [vars]
 OPENAI_API_KEY = "sk-..."  # your actual OpenAI key here
+
+[build]
+command = "pnpm install --no-frozen-lockfile"
