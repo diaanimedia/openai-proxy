@@ -1,5 +1,3 @@
-import handleRequest from "../../src/handle-request";
-
 export const config = {
   runtime: "edge",
   regions: [
@@ -11,6 +9,17 @@ export const config = {
 
 export default {
   async fetch(request: Request): Promise<Response> {
-    return handleRequest(request);
+    const body = await request.text();
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body,
+    });
+
+    return response;
   }
 };
